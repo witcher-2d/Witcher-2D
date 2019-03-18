@@ -10,12 +10,12 @@ from .. import map_size
 
 
 class Hero(object):
-    size = (50, 63)
+    size = (50, 64)
     image_path = 'Witcher 2D_r/game/res/hero_spritesheet.png'
     frames = {
         'stay': 4,
         'walk': 4,
-        'jump': 4,
+        'jump': 1
     }
     animation_speed = 0.15
     speedx = 200
@@ -25,6 +25,7 @@ class Hero(object):
     on_ground = False
     flipx = False
     pos = Position()
+    jump1 = False
 
     def __init__(self, start_pos=Position(x=100, y=100)):
         self.surface = Surface(self.size, SRCALPHA)
@@ -40,9 +41,17 @@ class Hero(object):
 
     def update_anim(self, time):
         self.last_frame_time += time
+        pos = 0
         if self.anim_jump:
             row = 64
             frames = self.frames['jump']
+            if self.speedy > 0:
+                pos = 42
+            elif self.speedy < 0:
+                pos = 84
+            elif self.speedy == 0:
+                pos = 126
+                self.anim_jump = False
         else:
             if self.on_walk:
                 row = 128
@@ -63,7 +72,7 @@ class Hero(object):
             self.spritesheet,
             (0, 0),
             (
-                42*self.current_frame,
+                42*self.current_frame + pos,
                 row,
                 42, 64
             )
@@ -75,9 +84,10 @@ class Hero(object):
         self.speedy += gravity
 
         if keys[pygame.K_SPACE] and self.on_gorund:
-            self.speedy = -0.2
+            self.speedy = -0.2##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             self.current_frame = 0
             self.anim_jump = True
+            self.jump1 = True
         if keys[pygame.K_a]:
             self.pos.x -= self.speedx * td
             self.flipx = True
@@ -86,6 +96,8 @@ class Hero(object):
             self.pos.x += self.speedx * td
             self.flipx = False
             self.on_walk = True
+        if self.speedy > 0.05:
+            self.anim_jump = True
         self.pos.y += self.speedy * td
 
    

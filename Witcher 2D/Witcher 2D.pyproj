@@ -25,10 +25,10 @@
     <Compile Include="Witcher 2D_r\game\core\vector2.py" />
     <Compile Include="Witcher 2D_r\game\core\__init__.py" />
     <Compile Include="Witcher 2D_r\game\game.py" />
-    <Compile Include="Witcher 2D_r\game\objects\hero.py" />
-    <Compile Include="Witcher 2D_r\game\objects\Object.py">
+    <Compile Include="Witcher 2D_r\game\objects\BaseClass.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Witcher 2D_r\game\objects\hero.py" />
     <Compile Include="Witcher 2D_r\game\objects\platform.py" />
     <Compile Include="Witcher 2D_r\game\objects\position.py" />
     <Compile Include="Witcher 2D_r\game\objects\__init__.py" />
