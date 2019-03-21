@@ -22,8 +22,8 @@ class Camera(object):
 
     def update_pos(self, center_on_hero=True):
         if center_on_hero:
-            x = int(self.hero.pos.x) - int(self.screen_size.x)/2
-            y = int(self.hero.pos.y) - int(self.screen_size.y)/2
+            x = int(self.hero.pos.x) - int(self.screen_size.x)/2 + int(self.hero.size[0]/2)
+            y = int(self.hero.pos.y) - int(self.screen_size.y)/2 + int(self.hero.size[1]/2)
 
         if x < 0:
             x = 0
