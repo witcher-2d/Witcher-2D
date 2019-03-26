@@ -7,14 +7,17 @@ from .objects.platform import Platform
 from .objects.position import Position
 from .camera import Camera
 from pygame import key
-
+from .objects.NPC import NPC
 
 def start():
     pygame.init()
 
     screen = pygame.display.set_mode(screen_size)
     hero = Hero()
+    Z = NPC(Position(200, 150))
+
     camera = Camera(hero, screen)
+    camera.add_object_to_draw(Z)
     camera.add_object_to_draw(hero)
     platforms = []
     for i in range(20):
@@ -26,7 +29,7 @@ def start():
     cur_time = time.time()
     time_delta = 0
     last_frame_time = 0
-    to_shoot = True
+    to_hit = True
     while 1:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -42,6 +45,8 @@ def start():
             item.update_pos(time_delta)
         hero.update_pos(keys, platforms, time_delta)
         hero.update_anim(time_delta)
+        Z.update_pos(keys, platforms, time_delta)
+        Z.update_anim(time_delta)
         camera.update_pos()
 
         screen.fill(Colors.black.value)

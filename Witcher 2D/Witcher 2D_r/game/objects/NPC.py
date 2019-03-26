@@ -8,14 +8,14 @@ from .. import screen_size, gravity
 from .position import Position
 from .. import map_size
 
-
-class Hero(object):
+class NPC(object):
     size = (50, 64)
-    image_path = 'Witcher 2D_r/game/res/hero_spritesheet.png'
+    image_path = 'Witcher 2D_r/game/res/Zeppily.jpg'
+    pos = Position()
     frames = {
-        'stay': 4,
-        'walk': 4,
-        'jump': 4
+        'stay': 1,
+        'walk': 1,
+        'jump': 1
     }
     animation_speed = 0.15
     speedx = 200
@@ -27,8 +27,9 @@ class Hero(object):
     pos = Position()
     jump1 = False
 
-    def __init__(self, start_pos=Position(x=100, y=100)):
+    def __init__(self, start_pos):
         self.surface = Surface(self.size, SRCALPHA)
+
         self.spritesheet = load_img(self.image_path)
         self.surface.fill((0, 0, 0, 0))
         self.pos = start_pos
@@ -39,6 +40,8 @@ class Hero(object):
         self.current_frame = 0
         self.last_frame_time = 0
 
+        self.surface.blit(self.spritesheet, (0, 0))
+    
     def update_anim(self, time):
         self.last_frame_time += time
         pos = 0
@@ -82,25 +85,6 @@ class Hero(object):
     def update_pos(self, keys, platforms,td):
         self.on_walk = False
         self.speedy += gravity
-
-        if keys[pygame.K_SPACE] and self.on_gorund:
-            self.speedy = -0.2##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            self.current_frame = 0
-            self.anim_jump = True
-            self.jump1 = True
-        if keys[pygame.K_a]:
-            self.pos.x -= self.speedx * td
-            self.flipx = True
-            self.on_walk = True
-        if keys[pygame.K_d]:
-            self.pos.x += self.speedx * td
-            self.flipx = False
-            self.on_walk = True
-        if self.speedy > 0.05:
-            self.anim_jump = True
-        self.pos.y += self.speedy * td
-
-   
         self.pos.y += self.speedy
         self.on_ground = False
 
@@ -141,6 +125,5 @@ class Hero(object):
                     self.speedy = 0
                     self.pos.y = self.rect.y
 
-          
     def put_on_screen(self, screen):
         screen.blit(self.surface, self.rect)
