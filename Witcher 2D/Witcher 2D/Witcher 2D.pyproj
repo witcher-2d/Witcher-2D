@@ -1,0 +1,85 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>49f76455-d070-465d-bbed-4b4b007d2b10</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>Witcher 2D_r\main.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>Witcher 2D</Name>
+    <RootNamespace>Witcher 2D</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Witcher 2D_r\game\animation\animation_types.py" />
+    <Compile Include="Witcher 2D_r\game\animation\animator.py" />
+    <Compile Include="Witcher 2D_r\game\animation\frames.py" />
+    <Compile Include="Witcher 2D_r\game\animation\__init__.py" />
+    <Compile Include="Witcher 2D_r\game\camera.py" />
+    <Compile Include="Witcher 2D_r\game\core\object_manager.py" />
+    <Compile Include="Witcher 2D_r\game\core\rect.py" />
+    <Compile Include="Witcher 2D_r\game\core\vector2.py" />
+    <Compile Include="Witcher 2D_r\game\core\__init__.py" />
+    <Compile Include="Witcher 2D_r\game\game.py" />
+    <Compile Include="Witcher 2D_r\game\objects\base.py" />
+    <Compile Include="Witcher 2D_r\game\objects\bullet.py" />
+    <Compile Include="Witcher 2D_r\game\objects\NPC.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Witcher 2D_r\game\objects\hero.py" />
+    <Compile Include="Witcher 2D_r\game\objects\object_manager.py" />
+    <Compile Include="Witcher 2D_r\game\objects\platform.py" />
+    <Compile Include="Witcher 2D_r\game\objects\position.py" />
+    <Compile Include="Witcher 2D_r\game\objects\__init__.py" />
+    <Compile Include="Witcher 2D_r\game\object_manager.py" />
+    <Compile Include="Witcher 2D_r\game\__init__.py" />
+    <Compile Include="Witcher 2D_r\main.py" />
+    <Compile Include="Witcher 2D_r\setup.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Witcher 2D_r\" />
+    <Folder Include="Witcher 2D_r\game\" />
+    <Folder Include="Witcher 2D_r\game\animation\" />
+    <Folder Include="Witcher 2D_r\game\core\" />
+    <Folder Include="Witcher 2D_r\game\objects\" />
+    <Folder Include="Witcher 2D_r\game\objects\__pycache__\" />
+    <Folder Include="Witcher 2D_r\game\res\" />
+    <Folder Include="Witcher 2D_r\game\__pycache__\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Witcher 2D_r\.gitignore" />
+    <Content Include="Witcher 2D_r\game\objects\bullet.py~" />
+    <Content Include="Witcher 2D_r\game\objects\__pycache__\hero.cpython-37.pyc" />
+    <Content Include="Witcher 2D_r\game\objects\__pycache__\platform.cpython-36.pyc" />
+    <Content Include="Witcher 2D_r\game\objects\__pycache__\platform.cpython-37.pyc" />
+    <Content Include="Witcher 2D_r\game\objects\__pycache__\position.cpython-37.pyc" />
+    <Content Include="Witcher 2D_r\game\objects\__pycache__\__init__.cpython-37.pyc" />
+    <Content Include="Witcher 2D_r\game\res\30230904.jpg" />
+    <Content Include="Witcher 2D_r\game\res\hero_spritesheet.png" />
+    <Content Include="Witcher 2D_r\game\res\Zeppily.jpg" />
+    <Content Include="Witcher 2D_r\game\res\wall.png" />
+    <Content Include="Witcher 2D_r\game\__pycache__\game.cpython-37.pyc" />
+    <Content Include="Witcher 2D_r\game\__pycache__\__init__.cpython-37.pyc" />
+    <Content Include="Witcher 2D_r\LICENSE" />
+    <Content Include="Witcher 2D_r\README.md" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
