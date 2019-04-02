@@ -1,109 +1,130 @@
-from pygame import Surface, SRCALPHA
-from pygame import Rect
-from pygame.image import load as load_img
-from pygame.transform import flip
+from pygame import Rect as pyRect
 import pygame
-from .. import Colors
 from .. import screen_size, gravity
+from .base import BaseGameObject
 from .position import Position
-from .. import map_size
+from ..animation.animator import Animator
+from ..animation.frames import FrameRow, Frame
+from ..core.rect import Rect
 
 
-class Hero(object):
-    size = (50, 63)
+walking_sprites = (
+    20, 114,
+    47, 68,
+)
+
+
+class Hero(BaseGameObject):
     image_path = 'Witcher 2D_r/game/res/hero_spritesheet.png'
     frames = {
         'stay': 4,
         'walk': 4,
         'jump': 4,
     }
-    animation_speed = 0.15
+    animation_speed = 1.0
     speedx = 200
     speedy = 0
+    on_gorund = False
+    flipx = False
     on_walk = False
     anim_jump = False
-    on_ground = False
-    flipx = False
-    pos = Position()
 
     def __init__(self, start_pos=Position(x=100, y=100)):
-        self.surface = Surface(self.size, SRCALPHA)
-        self.spritesheet = load_img(self.image_path)
-        self.surface.fill((0, 0, 0, 0))
+        super().__init__()
+        self.size.x = 43
+        self.size.y = 64
         self.pos = start_pos
-        self.rect = Rect(
+        self.rect = pyRect(
             self.pos.x, self.pos.y,
-            self.size[0], self.size[1]
+            self.size.x, self.size.y
             )
-        self.current_frame = 0
-        self.last_frame_time = 0
+        self.animator = Animator(self.image_path, size=self.size)
+        frames_row_stay = FrameRow()
+        frames_row_stay.speed = 1.0/7.5
+        for i in range(4):
+            frames_row_stay.add(Frame(Rect(x=0 + 42*i, y=0, w=42 + 42*i, h=62)))
+        self.animator.add_frames_row('stay', frames_row_stay)
+        self.animator.set_row('stay')
+        frames_row_jump = FrameRow()
+        frames_row_jump.speed = 1.0/5
+        for i in range(4):
+            frames_row_jump.add(Frame(Rect(x=0 + 42*i, y=64, w=42 + 42*i, h=64)))
+        self.animator.add_frames_row('jump', frames_row_jump)
+        frames_row_walk = FrameRow()
+        frames_row_walk.speed = 1.0/7.5
+        for i in range(4):
+            frames_row_walk.add(Frame(Rect(x=0 + 42*i, y=128, w=42 + 42*i, h=128)))
+        self.animator.add_frames_row('walk', frames_row_walk)
 
     def update_anim(self, time):
-        self.last_frame_time += time
-        if self.anim_jump:
-            row = 64
-            frames = self.frames['jump']
-        else:
-            if self.on_walk:
-                row = 128
-                frames = self.frames['walk']
-            else:
-                row = 0
-                frames = self.frames['stay']
+        self.animator.update_frame(time)
+        self.animator.draw()
 
-            while self.last_frame_time > self.animation_speed:
-                self.current_frame += 1
-                self.last_frame_time = self.last_frame_time - self.animation_speed
-            if not self.anim_jump:
-                self.current_frame = self.current_frame % frames
-            else:
-                self.current_frame = min(self.current_frame, frames)
-        self.surface.fill((0, 0, 0, 0))
-        self.surface.blit(
-            self.spritesheet,
-            (0, 0),
-            (
-                42*self.current_frame,
-                row,
-                42, 64
-            )
+    @property
+    def view_point(self):
+        forward = 100
+        if self.animator.flipx:
+            forward *= -1
+
+        return Position(
+            x=self.pos.x + forward,
+            y=self.pos.y - 50
         )
-        self.surface = flip(self.surface, self.flipx, False)
 
-    def update_pos(self, keys, platforms,td):
+    def update_pos(self, keys, platforms, td):
         self.on_walk = False
         self.speedy += gravity
-
         if keys[pygame.K_SPACE] and self.on_gorund:
-            self.speedy = -0.2
+            self.speedy = -250
             self.current_frame = 0
             self.anim_jump = True
+            self.animator.set_row('jump')
         if keys[pygame.K_a]:
+            if self.animator.current_frame_name != "walk" and self.on_gorund and not self.anim_jump:
+                self.animator.set_row('walk')
             self.pos.x -= self.speedx * td
-            self.flipx = True
+            self.animator.flipx = True
             self.on_walk = True
         if keys[pygame.K_d]:
+            if self.animator.current_frame_name != "walk" and self.on_gorund and not self.anim_jump:
+                self.animator.set_row('walk')
             self.pos.x += self.speedx * td
-            self.flipx = False
+            self.animator.flipx = False
             self.on_walk = True
         self.pos.y += self.speedy * td
 
-   
-        self.pos.y += self.speedy
-        self.on_ground = False
-
+        self.on_gorund = False
         if self.pos.x < 0:
             self.pos.x = 0
         if self.pos.y < 0:
             self.pos.y = 0
-        if self.pos.x > map_size.x - self.rect.w:
-            self.pos.x = map_size.x - self.rect.w
-        if self.pos.y > map_size.y - self.rect.h:
-            self.pos.y = map_size.y - self.rect.h
+        if self.pos.x > screen_size[0] - self.rect.w:
+            self.pos.x = screen_size[0] - self.rect.w
+        if self.pos.y > screen_size[1] - self.rect.h:
+            self.pos.y = screen_size[1] - self.rect.h
             self.speedy = 0
+            if self.animator.current_frame_name != "stay":
+                self.animator.set_row('stay')
             self.on_gorund = True
             self.anim_jump = False
-        self.on_gorund = False
+
+        self.rect.y = self.pos.y
+        for item in platforms:
+            if self.rect.colliderect(item.rect):
+                if (self.speedy > 0):
+                    self.rect.y = item.rect.y - self.rect.h
+                    self.speedy = 0
+
+                    self.on_gorund = True
+                    if self.animator.current_frame_name != "stay" and not keys[pygame.K_d] and not keys[pygame.K_a]:
+                        self.animator.set_row('stay')
+                    self.anim_jump = False
+                    self.pos.y = self.rect.y
+                if (self.speedy < 0):
+                    self.rect.y = item.rect.y + item.rect.h
+                    self.speedy = 0
+                    self.pos.y = self.rect.y
+
         self.rect.x = self.pos.x
         for item in platforms:
             if self.rect.colliderect(item.rect):
@@ -113,22 +134,3 @@ class Hero(object):
                 if (keys[pygame.K_a]):
                     self.rect.x = item.rect.x + item.rect.w
                     self.pos.x = self.rect.x
-
-
-        self.rect.y = self.pos.y
-        for item in platforms:           
-            if self.rect.colliderect(item.rect):
-                if (self.speedy > 0):
-                    self.rect.y = item.rect.y - self.rect.h
-                    self.speedy = 0
-                    self.on_gorund = True
-                    self.anim_jump = False
-                    self.pos.y = self.rect.y
-                if (self.speedy < 0):
-                    self.rect.y = item.rect.y + item.rect.h
-                    self.speedy = 0
-                    self.pos.y = self.rect.y
-
-          
-    def put_on_screen(self, screen):
-        screen.blit(self.surface, self.rect)

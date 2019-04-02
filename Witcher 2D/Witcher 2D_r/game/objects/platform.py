@@ -1,28 +1,27 @@
 from .position import Position
-from pygame import Surface, SRCALPHA
-from pygame import Rect
-from pygame.image import load as load_img
-from pygame.transform import flip
+from pygame import Rect as pyRect
+from .base import BaseGameObject
+from ..animation.animator import Animator
+from ..animation.frames import FrameRow, Frame
+from ..core.rect import Rect
 
-class Platform(object):
-    size = (50, 20)
+
+class Platform(BaseGameObject):
     image_path = 'Witcher 2D_r/game/res/wall.png'
     pos = Position()
 
     def __init__(self, start_pos):
-        self.surface = Surface(self.size, SRCALPHA)
-
-        self.spritesheet = load_img(self.image_path)
-        self.surface.fill((0, 0, 0, 0))
+        super().__init__()
+        self.size.x = 50
+        self.size.y = 20
         self.pos = start_pos
-        self.rect = Rect(
+        self.rect = pyRect(
             self.pos.x, self.pos.y,
-            self.size[0], self.size[1]
+            self.size.x, self.size.y
             )
-        self.current_frame = 0
-        self.last_frame_time = 0
-
-        self.surface.blit(self.spritesheet, (0, 0))
-    
-    def put_on_screen(self, screen):
-        screen.blit(self.surface, self.rect)
+        self.animator = Animator(self.image_path, size=self.size)
+        frames_row = FrameRow()
+        frames_row.add(Frame(Rect(x=0, y=0, w=50, h=20)))
+        self.animator.add_frames_row('stay', frames_row)
+        self.animator.set_row('stay')
+        self.animator.draw()

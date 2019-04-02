@@ -6,41 +6,44 @@ from . import map_size, screen_size
 
 class Camera(object):
 
-    def __init__(self, hero, screen):
-        self.pos = Position
-        self.hero = hero
+    def __init__(self, screen, center_obj=None):
+        self.pos = Position()
         self.screen = screen
         self.screen_size = Vector2(screen_size[0], screen_size[1])
         self.map_maxs = map_size
-        self.to_draw = []
+        self.center_obj = center_obj
 
-    def add_object_to_draw(self, object):
-        self.to_draw.append(object)
-
-    def add_objects_to_draw(self, objects):
-        self.to_draw = [*self.to_draw, *objects]
+    def set_center_obj(self, obj):
+        self.center_obj = obj
 
     def update_pos(self, center_on_hero=True):
-        if center_on_hero:
-            x = int(self.hero.pos.x) - int(self.screen_size.x)/2
-            y = int(self.hero.pos.y) - int(self.screen_size.y)/2
 
-        if x < 0:
-            x = 0
-        if y < 0:
-            y = 0
-        if x + self.screen_size.x > self.map_maxs.x:
-            x = self.map_maxs.x - self.screen_size.x
-        if y + self.screen_size.y > self.map_maxs.y:
-            y = self.map_maxs.y - self.screen_size.y
+        if not self.center_obj or not center_on_hero:
+            return
+        prev_pos = self.pos
+        dest_pos = self.center_obj.view_point
+        dest_pos.x =\
+            dest_pos.x\
+            + int(self.center_obj.size.x/2)\
+            - float(self.screen_size.x)/2
+        dest_pos.y =\
+            dest_pos.y\
+            + int(self.center_obj.size.y/2)\
+            - float(self.screen_size.y)/2
 
-        self.pos.x = x
-        self.pos.y = y
+        dest_pos = Position.smooth_move(prev_pos, dest_pos)
+        dest_pos.put_in_rect(
+            0,
+            0,
+            self.map_maxs.x - self.screen_size.x,
+            self.map_maxs.y - self.screen_size.y,
+        )
+        self.pos = dest_pos
 
-    def draw(self):
-        for o in self.to_draw:
+    def draw(self, to_draw):
+        for o in to_draw:
             self.screen.blit(
-                o.surface,
+                o.animator.surface,
                 (
                     o.rect.x - self.pos.x,
                     o.rect.y - self.pos.y,
