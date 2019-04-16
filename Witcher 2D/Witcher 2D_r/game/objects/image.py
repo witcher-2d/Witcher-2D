@@ -6,14 +6,14 @@ from ..animation.frames import FrameRow, Frame
 from ..core.rect import Rect
 
 
-class Platform(BaseGameObject):
-    image_path = 'Witcher 2D_r/game/res/wall.png'
+class Image(BaseGameObject):
+    image_path = 'Witcher 2D_r/game/res/Sky.png'
     pos = Position()
 
-    def __init__(self, start_pos):
+    def __init__(self, start_pos, image_path):
         super().__init__()
-        self.size.x = 50
-        self.size.y = 20
+        self.size.x = 1000
+        self.size.y = 1000
         self.pos = start_pos
         self.rect = pyRect(
             self.pos.x, self.pos.y,
@@ -21,7 +21,7 @@ class Platform(BaseGameObject):
             )
         self.animator = Animator(self.image_path, size=self.size)
         frames_row = FrameRow()
-        frames_row.add(Frame(Rect(x=0, y=0, w=50, h=20)))
+        frames_row.add(Frame(Rect(x=0, y=0, w=1000, h=1000)))
         self.animator.add_frames_row('stay', frames_row)
         self.animator.set_row('stay')
         self.animator.draw()
