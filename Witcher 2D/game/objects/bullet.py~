@@ -1,0 +1,49 @@
+from position import Position
+
+
+class Bullet(Object):
+    image_path = 'game/res/bullet.png'
+
+    def __init__(self):
+        self.surface = Surface(self.size, SRCALPHA)
+
+        self.spritesheet = load_img(self.image_path)
+        self.surface.fill((0, 0, 0, 0))
+        self.pos = start_pos
+        self.rect = Rect(
+            self.pos.x, self.pos.y,
+            self.size[0], self.size[1]
+            )
+        self.current_frame = 0
+        self.last_frame_time = 0
+
+    def update_anim(self, time):
+        self.last_frame_time += time
+        if self.anim_jump:
+            row = 297
+            frames = self.frames['jump']
+        elif self.on_walk:
+            row = 110
+            frames = self.frames['walk']
+        else:
+            row = 14
+            frames = self.frames['stay']
+
+        while self.last_frame_time > self.animation_speed:
+            self.current_frame += 1
+            self.last_frame_time = self.last_frame_time - self.animation_speed
+        if not self.anim_jump:
+            self.current_frame = self.current_frame % frames
+        else:
+            self.current_frame = min(self.current_frame, frames)
+        self.surface.fill((0, 0, 0, 0))
+        self.surface.blit(
+            self.spritesheet,
+            (0, 0),
+            (
+                10 + (23 + 57)*self.current_frame,
+                row,
+                61, 70
+            )
+        )
+        self.surface = flip(self.surface, self.flipx, False)
