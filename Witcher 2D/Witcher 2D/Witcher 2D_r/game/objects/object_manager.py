@@ -22,7 +22,7 @@ class ObjectManager(object):
         self.to_draw = ObjectList()
         self.to_update_pos = ObjectList()
 
-    def load_objcet(self, obj):
+    def load_object(self, obj):
         if callable(obj):
             obj = obj()
 

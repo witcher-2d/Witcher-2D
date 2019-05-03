@@ -26,13 +26,15 @@
     <Compile Include="Witcher 2D_r\game\animation\frames.py" />
     <Compile Include="Witcher 2D_r\game\animation\__init__.py" />
     <Compile Include="Witcher 2D_r\game\camera.py" />
-    <Compile Include="Witcher 2D_r\game\core\object_manager.py" />
     <Compile Include="Witcher 2D_r\game\core\rect.py" />
     <Compile Include="Witcher 2D_r\game\core\vector2.py" />
     <Compile Include="Witcher 2D_r\game\core\__init__.py" />
     <Compile Include="Witcher 2D_r\game\game.py" />
     <Compile Include="Witcher 2D_r\game\objects\base.py" />
-    <Compile Include="Witcher 2D_r\game\objects\bullet.py" />
+    <Compile Include="Witcher 2D_r\game\objects\bomb.py" />
+    <Compile Include="Witcher 2D_r\game\objects\image.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Witcher 2D_r\game\objects\NPC.py">
       <SubType>Code</SubType>
     </Compile>
@@ -59,6 +61,8 @@
   <ItemGroup>
     <Content Include="Witcher 2D_r\.gitignore" />
     <Content Include="Witcher 2D_r\game\objects\bullet.py~" />
+    <Content Include="Witcher 2D_r\game\res\bomb.png" />
+    <Content Include="Witcher 2D_r\game\res\Sky.png" />
     <Content Include="Witcher 2D_r\game\objects\__pycache__\hero.cpython-37.pyc" />
     <Content Include="Witcher 2D_r\game\objects\__pycache__\platform.cpython-36.pyc" />
     <Content Include="Witcher 2D_r\game\objects\__pycache__\platform.cpython-37.pyc" />
@@ -66,8 +70,10 @@
     <Content Include="Witcher 2D_r\game\objects\__pycache__\__init__.cpython-37.pyc" />
     <Content Include="Witcher 2D_r\game\res\30230904.jpg" />
     <Content Include="Witcher 2D_r\game\res\hero_spritesheet.png" />
+    <Content Include="Witcher 2D_r\game\res\Kajdush.png" />
     <Content Include="Witcher 2D_r\game\res\Zeppily.jpg" />
     <Content Include="Witcher 2D_r\game\res\wall.png" />
+    <Content Include="Witcher 2D_r\game\res\бомба.png" />
     <Content Include="Witcher 2D_r\game\__pycache__\game.cpython-37.pyc" />
     <Content Include="Witcher 2D_r\game\__pycache__\__init__.cpython-37.pyc" />
     <Content Include="Witcher 2D_r\LICENSE" />

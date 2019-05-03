@@ -1,122 +1,84 @@
-from pygame import Surface, SRCALPHA
-from pygame import Rect
-from pygame.image import load as load_img
-from pygame.transform import flip
+from pygame import Rect as pyRect
 import pygame
-from .. import Colors
 from .. import screen_size, gravity
+from .base import BaseGameObject
 from .position import Position
-from .. import map_size
+from ..animation.animator import Animator
+from ..animation.frames import FrameRow, Frame
+from ..core.rect import Rect
 
-class NPC(object):
-    size = (50, 64)
-    image_path = 'Witcher 2D_r/game/res/Zeppily.jpg'
-    pos = Position()
+class NPC(BaseGameObject):
+    image_path = 'Witcher 2D_r/game/res/Kajdush.png'
     frames = {
-        'stay': 1,
-        'walk': 1,
-        'jump': 1
+        'stay': 1
     }
-    animation_speed = 0.15
+    animation_speed = 1.0
     speedx = 200
     speedy = 0
+    on_gorund = False
+    flipx = False
     on_walk = False
     anim_jump = False
-    on_ground = False
-    flipx = False
-    pos = Position()
-    jump1 = False
 
-    def __init__(self, start_pos):
-        self.surface = Surface(self.size, SRCALPHA)
-
-        self.spritesheet = load_img(self.image_path)
-        self.surface.fill((0, 0, 0, 0))
+    def __init__(self, start_pos=Position(x=200, y=200)):
+        super().__init__()
+        self.size.x = 64
+        self.size.y = 64
         self.pos = start_pos
-        self.rect = Rect(
+        self.rect = pyRect(
             self.pos.x, self.pos.y,
-            self.size[0], self.size[1]
+            self.size.x, self.size.y
             )
-        self.current_frame = 0
-        self.last_frame_time = 0
+        self.animator = Animator(self.image_path, size=self.size)
+        frames_row_stay = FrameRow()
+        frames_row_stay.speed = 1.0/7.5
 
-        self.surface.blit(self.spritesheet, (0, 0))
-    
+        frames_row_stay.add(Frame(Rect(x=0, y=0, w=64, h=64)))
+        self.animator.add_frames_row('stay', frames_row_stay)
+        self.animator.set_row('stay')
+
     def update_anim(self, time):
-        self.last_frame_time += time
-        pos = 0
-        if self.anim_jump:
-            row = 64
-            frames = self.frames['jump']
-            if self.speedy > 0:
-                pos = 42
-            elif self.speedy < 0:
-                pos = 84
-            elif self.speedy == 0:
-                pos = 126
-                self.anim_jump = False
-        else:
-            if self.on_walk:
-                row = 128
-                frames = self.frames['walk']
-            else:
-                row = 0
-                frames = self.frames['stay']
+        self.animator.update_frame(time)
+        self.animator.draw()
 
-            while self.last_frame_time > self.animation_speed:
-                self.current_frame += 1
-                self.last_frame_time = self.last_frame_time - self.animation_speed
-            if not self.anim_jump:
-                self.current_frame = self.current_frame % frames
-            else:
-                self.current_frame = min(self.current_frame, frames)
-        self.surface.fill((0, 0, 0, 0))
-        self.surface.blit(
-            self.spritesheet,
-            (0, 0),
-            (
-                42*self.current_frame + pos,
-                row,
-                42, 64
-            )
+    @property
+    def view_point(self):
+        forward = 100
+        if self.animator.flipx:
+            forward *= -1
+
+        return Position(
+            x=self.pos.x + forward,
+            y=self.pos.y - 50
         )
-        self.surface = flip(self.surface, self.flipx, False)
 
-    def update_pos(self, keys, platforms,td):
+    def update_pos(self, keys, platforms, td):
         self.on_walk = False
         self.speedy += gravity
-        self.pos.y += self.speedy
-        self.on_ground = False
+        self.pos.y += self.speedy * td
 
+        self.on_gorund = False
         if self.pos.x < 0:
             self.pos.x = 0
         if self.pos.y < 0:
             self.pos.y = 0
-        if self.pos.x > map_size.x - self.rect.w:
-            self.pos.x = map_size.x - self.rect.w
-        if self.pos.y > map_size.y - self.rect.h:
-            self.pos.y = map_size.y - self.rect.h
+        if self.pos.x > screen_size[0] - self.rect.w:
+            self.pos.x = screen_size[0] - self.rect.w
+        if self.pos.y > screen_size[1] - self.rect.h:
+            self.pos.y = screen_size[1] - self.rect.h
             self.speedy = 0
+            if self.animator.current_frame_name != "stay":
+                self.animator.set_row('stay')
             self.on_gorund = True
             self.anim_jump = False
-        self.on_gorund = False
-        self.rect.x = self.pos.x
-        for item in platforms:
-            if self.rect.colliderect(item.rect):
-                if (keys[pygame.K_d]):
-                    self.rect.x = item.rect.x - self.rect.w
-                    self.pos.x = self.rect.x
-                if (keys[pygame.K_a]):
-                    self.rect.x = item.rect.x + item.rect.w
-                    self.pos.x = self.rect.x
-
 
         self.rect.y = self.pos.y
-        for item in platforms:           
+        for item in platforms:
             if self.rect.colliderect(item.rect):
                 if (self.speedy > 0):
                     self.rect.y = item.rect.y - self.rect.h
                     self.speedy = 0
+
                     self.on_gorund = True
                     self.anim_jump = False
                     self.pos.y = self.rect.y
@@ -125,5 +87,6 @@ class NPC(object):
                     self.speedy = 0
                     self.pos.y = self.rect.y
 
-    def put_on_screen(self, screen):
-        screen.blit(self.surface, self.rect)
+        self.rect.x = self.pos.x
+
+

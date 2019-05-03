@@ -3,7 +3,6 @@ from .animation_types import AnimationType
 
 
 class Frame(object):
-
     def __init__(self, rect=Rect()):
         self.rect = rect
 

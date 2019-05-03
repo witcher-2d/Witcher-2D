@@ -22,7 +22,7 @@ class ObjectManager(object):
         self.to_draw = ObjectList()
         self.to_update_pos = ObjectList()
 
-    def load_objcet(self, obj):
+    def load_object(self, obj):
         if callable(obj):
             obj = obj()
 
@@ -32,6 +32,7 @@ class ObjectManager(object):
             self.to_draw.add_item(obj)
         if obj.is_movable:
             self.to_update_pos.add_item(obj)
+        print('222')
 
     def load_list(self, obj_list, is_drawable=True, is_movable=False):
         for obj in obj_list:
