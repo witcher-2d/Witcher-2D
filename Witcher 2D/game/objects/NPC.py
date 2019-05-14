@@ -8,12 +8,13 @@ from ..animation.frames import FrameRow, Frame
 from ..core.rect import Rect
 
 class NPC(BaseGameObject):
+    hp = 300
     image_path = 'game/res/Kajdush.png'
     frames = {
         'stay': 1
     }
     animation_speed = 1.0
-    speedx = 200
+    speedx = 0
     speedy = 0
     on_gorund = False
     flipx = False
@@ -40,6 +41,7 @@ class NPC(BaseGameObject):
     def update_anim(self, time):
         self.animator.update_frame(time)
         self.animator.draw()
+        print(self.hp)
 
     @property
     def view_point(self):
@@ -52,11 +54,28 @@ class NPC(BaseGameObject):
             y=self.pos.y - 50
         )
 
+    def take_damage(self, damage, td, direction):
+        self.hp -= damage
+        if direction == 0:
+            self.speedx = -200 
+        else:
+            self.speedx = 200 
+        self.speedy -= 40
+        self.pos.y += self.speedy * td * 10
+        if self.hp <= 0:
+            self.destroy()
+
+
     def update_pos(self, keys, platforms, td):
         self.on_walk = False
         self.speedy += gravity
         self.pos.y += self.speedy * td
 
+        self.pos.x += self.speedx * td
+        if(self.speedx != 0 and self.speedx > 0):
+            self.speedx -= 10
+        elif(self.speedx != 0 and self.speedx < 0):
+            self.speedx += 10
         self.on_gorund = False
         if self.pos.x < 0:
             self.pos.x = 0

@@ -6,6 +6,9 @@ from .position import Position
 from ..animation.animator import Animator
 from ..animation.frames import FrameRow, Frame
 from ..core.rect import Rect
+from .dialog import showDialog
+from ..pygame_functions import *
+import random
 
 
 class Hero(BaseGameObject):
@@ -19,7 +22,9 @@ class Hero(BaseGameObject):
         'walk_wsword': 4,
         'draw_the_sword': 4,
         'attack_wsword': 2,
-        'hide_the_sword': 4
+        'hide_the_sword': 4,
+        'attack': 3,
+
     }
     animation_speed = 1.0
     speedx = 100
@@ -60,7 +65,7 @@ class Hero(BaseGameObject):
         frames_row_stay_wsword = FrameRow()
         frames_row_stay_wsword.speed = 1.0 / 7.5
         for i in range(4):
-            frames_row_stay_wsword.add(Frame(Rect(x=0 + 42 * i, y=262, w=42 + 42 * i, h=62)))
+            frames_row_stay_wsword.add(Frame(Rect(x=0 + 42 * i, y=261, w=42 + 42 * i, h=64)))
         self.animator.add_frames_row('stay_wsword', frames_row_stay_wsword)
         frames_row_jump_wsword = FrameRow()
         frames_row_jump_wsword.speed = 1.0 / 5
@@ -77,7 +82,11 @@ class Hero(BaseGameObject):
         for i in range(4):
             frames_row_draw_the_sword.add(Frame(Rect(x=0 + 42 * i, y=390, w=42 + 42 * i, h=128)))
         self.animator.add_frames_row('draw_the_sword', frames_row_draw_the_sword)
-
+        frames_row_attack = FrameRow()
+        frames_row_attack.speed = 1.0 / 7.5
+        for i in range(3):
+            frames_row_attack.add(Frame(Rect(x=0 + 42 * i, y=454, w=42 + 42 * i, h=64)))
+        self.animator.add_frames_row('attack', frames_row_attack)
     def update_anim(self, time):
         self.animator.update_frame(time)
         self.animator.draw()
@@ -132,6 +141,9 @@ class Hero(BaseGameObject):
                     self.sword = True
                 else:
                     self.sword = False
+        if keys[pygame.K_g]:
+            newL = makeLabel("Hello, i am Reva.",48,50,50,"blue","Agency FB","white")
+            showLabel(newL)
         self.pos.y += self.speedy * td
         self.sword_time += td
         self.on_gorund = False
